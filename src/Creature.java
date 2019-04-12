@@ -5,7 +5,13 @@ import java.util.HashMap;
 public abstract class Creature {
     String name;
     Level.Room currentRoom;
-    private Player player;
+    String information;
+
+    public Creature(String name, String information, Level.Room currentRoom) {
+        this.currentRoom = currentRoom;
+        this.name = name;
+        this.information = information;
+    }
 
     public String getName(){
         return name;
@@ -13,11 +19,6 @@ public abstract class Creature {
 
     public void setName(String s){
         name = s;
-    }
-
-    public Creature(Player player, Level.Room currentRoom) {
-        this.currentRoom = currentRoom;
-        this.player = player;
     }
 
     protected void randomizeRoom(){
@@ -28,6 +29,28 @@ public abstract class Creature {
         Level.Room nextRoom = list.get(randIndex);
     }
 
-    public abstract void move (Level.Room roomToMoveTo);
+    public abstract void move ();
+
+    public Level.Room getCurrentRoom(){
+        return currentRoom;
+    }
+
+    public void setCurrentRoom(Level.Room currentRoom) {
+        this.currentRoom = currentRoom;
+    }
+
+    public void changeRoom (Level.Room roomToMoveTo){
+        setCurrentRoom(roomToMoveTo);
+    }
+
+    public String getInformation(){
+        return information;
+    }
+
+    public void setInformation(String information){
+        this.information = information;
+    }
+
+
 }
 

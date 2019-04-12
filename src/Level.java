@@ -6,10 +6,66 @@ import java.util.List;
 public class Level {
 
     private HashMap<String, Room> nodeList;
-
+    private Player player;
+    private ArrayList <Creature> creatureList;
 
     public Level() {
         nodeList = new HashMap<String, Room>();
+        creatureList = new ArrayList<>();
+    }
+
+    public void addCreature(Creature creature){
+        creatureList.add(creature);
+    }
+
+    public Creature removeCreature(String name){
+        for (int c = 0; c < creatureList.size(); c++){
+            Creature creature = creatureList.get(c);
+            String creatureName = creature.getName();
+            if (creatureName.equals(name)){
+                return creatureList.remove(c);
+            }
+        }
+        return null;
+    }
+
+    public String showCreaturePositions(){
+        String output = "";
+        for (Creature c : creatureList){
+            String creatureName = c.getName();
+            Level.Room creatureRoom = c.getCurrentRoom();
+            String creatureCurrentRoom = creatureRoom.getName();
+            output = output + creatureName + " -> " + creatureCurrentRoom + ". ";
+        }
+        return output;
+    }
+
+    public void removeCreature(Creature c){
+        if (creatureList.contains(c)){
+            creatureList.remove(c);
+        } else {
+            return;
+        }
+    }
+
+    public String showCreatures(Level.Room room){
+        String output = "";
+        for (Creature c : creatureList){
+            Level.Room creatureRoom = c.getCurrentRoom();
+            String creatureName = c.getName();
+            if (creatureRoom.equals(room)){
+                output = output + creatureName + " ";
+            }
+        }
+        return output;
+    }
+
+    public void creatureInformation(){
+        for (Creature c : creatureList){
+            int listSize = creatureList.size();
+            System.out.println("Number of animals is " + listSize);
+            c.move();
+        }
     }
 
     public void addRoom(String name, String information) {
@@ -71,15 +127,20 @@ public class Level {
         public String getNeighborNames() {
             String output = "";
             for (String x : neighbors.keySet()) {
-                Room name = neighbors.get(x);
-                output = output + name + ",";
+                Room room = neighbors.get(x);
+                String stringName = room.getName();
+                output = output + name + " ";
             }
             return output;
         }
 
         public ArrayList<Room> getNeighborsList(){
-            ArrayList<Room> roomsList = new ArrayList<>();
-            roomsList = new ArrayList<Room>(neighbors.values());
+            ArrayList<Room> roomsList = new ArrayList<Room>();
+
+            for (String n : neighbors.keySet()){
+                Room room = neighbors.get(n);
+                roomsList.add(room);
+            }
             return roomsList;
         }
 
@@ -88,8 +149,18 @@ public class Level {
             return neighborName;
         }
 
-        public ArrayList<Item> getItems() {
-            return itemlist;
+        public HashMap getNeighborsHash(){
+            return neighbors;
+        }
+
+
+        public String getItems() {
+            String output = "";
+            for (Item i : itemlist){
+                String itemName = i.getName();
+                output = output + itemName + " ";
+            }
+            return output;
         }
 
         public void addItem(Item item) {

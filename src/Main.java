@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
@@ -14,10 +15,8 @@ public class Main {
         root.addRoom("closet", "a dark, dark, closet");
         root.addRoom("dungeon", "a smelly dungeon");
 
-
         root.addDirectedEdge("hall", "dungeon");
         root.addUndirectedEdge("hall", "closet");
-
 
         Level.Room currentRoom = root.getRoom("hall");
         currentRoom.addItem(firstItem);
@@ -30,19 +29,20 @@ public class Main {
         do {
             System.out.println("You are currently in the " + currentRoom.getName());
 
-            System.out.println("What would you like to do? Go, Check, Look, or Quit");
+            System.out.println("What would you like to do? Go, Look, Add, or Quit. Type help for information about the commands");
             response = in.nextLine();
 
 
             if (response.substring(0, 2).equals("go")) {
-                currentRoom = root.getRoom(getSpecificString(response));
+                String s = getSpecificString(response);
+                currentRoom = root.getRoom(s);
             }
-            if (response.equals("look")) {
+            if (response.substring(0,4).equals("look")) {
                 System.out.println("You are currently in the " + currentRoom.getName());
                 System.out.println("You can go to the " + currentRoom.getNeighborNames());
 
             }
-            if (response.equals("add")) {
+            if (response.substring(0,3).equals("add")) {
                 String room = getSpecificString(response);
                 System.out.print("Please add a description");
                 String information = in.nextLine();
@@ -50,25 +50,25 @@ public class Main {
                 root.addDirectedEdge(currentRoom.getName(), room);
 
             }
-            if (response.equals("pick")) {
+            if (response.substring(0,4).equals("pick")) {
                 String item = getSpecificString(response);
                 Item taken = currentRoom.removeItem(item);
                 player.addItem(taken);
             }
-            if (response.equals("drop")) {
+            if (response.substring(0,4).equals("drop")) {
                 String item = getSpecificString(response);
                 Item taken = player.removeItem(item);
                 currentRoom.addItem(taken);
             }
             if (response.equals("quit")) {
                 break;
-            } else {
+            } if (response.equals("help")) {
                 System.out.println(" to go to a new room, type 'go <roomName>'");
-                System.out.println(" to add a new room, type 'add room<roomName>'");
+                System.out.println(" to add a new room, type 'add <roomName>'");
                 System.out.println(" to see all neighbors, type 'look' ");
                 System.out.println(" to quit, type quit");
-                System.out.println(" to pick up an item, type 'pick <itemName'");
-                System.out.println(" to drop an item, type 'drop <itemName'");
+                System.out.println(" to pick up an item, type 'pick <itemName>'");
+                System.out.println(" to drop an item, type 'drop <itemName>'");
             }
 
         } while (!response.equals("quit"));
@@ -87,14 +87,19 @@ public class Main {
 
     private static String getSpecificString(String ans) {
         String output = "";
-        for (int letter = 0; letter < ans.length(); letter++) {
-            String partial = ans.substring(letter, letter + 1);
-            if (partial.equals("<")) {
-                int last = getLast(ans, letter + 1);
-                output = ans.substring(letter + 1, last);
-                return output;
-            }
-        }
+        int first = ans.indexOf("<");
+        int second = ans.indexOf(">");
+        output = ans.substring(first + 1, second);
+//        String output = "";
+//        for (int letter = 0; letter < ans.length(); letter++) {
+//            String partial = ans.substring(letter, letter + 1);
+//            if (partial.equals("<")) {
+//                int last = getLast(ans, letter + 1);
+//                output = ans.substring(letter + 1, last);
+//                return output;
+//            }
+//        }
+//        return output;
         return output;
     }
 

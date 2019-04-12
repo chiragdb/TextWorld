@@ -17,8 +17,9 @@ public class Player {
         return currentRoom;
     }
 
-    public void setCurrentRoom(Level.Room newRoom) {
-        this.currentRoom = newRoom;
+    public void setCurrentRoom(Level.Room nextRoom) {
+        String newName = nextRoom.getName();
+        this.currentRoom = nextRoom;
     }
 
     public void addItem(Item item) {
@@ -41,7 +42,7 @@ public class Player {
         String output = "";
         for (Item item : itemList) {
             String itemName = item.getName();
-            output = output + ", " + itemName;
+            output = output + itemName + ", ";
         }
         return output;
     }
