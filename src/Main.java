@@ -1,3 +1,4 @@
+import javax.xml.bind.SchemaOutputResolver;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -14,32 +15,56 @@ public class Main {
         root.addRoom("hall", "a long, dank hallway");
         root.addRoom("closet", "a dark, dark, closet");
         root.addRoom("dungeon", "a smelly dungeon");
+        root.addRoom("bathroom", "very white");
+        root.addRoom("bedroom", "master bedroom");
 
         root.addDirectedEdge("hall", "dungeon");
-        root.addUndirectedEdge("hall", "closet");
+        root.addDirectedEdge("hall", "bathroom");
+        root.addDirectedEdge("hall", "closet");
+        root.addDirectedEdge("bedroom", "bathroom");
+
 
         Level.Room currentRoom = root.getRoom("hall");
-        currentRoom.addItem(firstItem);
-        currentRoom.addItem(secondItem);
-        currentRoom.addItem(thirdItem);
+
+        player.setCurrentRoom(currentRoom);
 
         String response = " ";
         Scanner in = new Scanner(System.in);
 
-        do {
-            System.out.println("You are currently in the " + currentRoom.getName());
+        Level.Room room1 = root.getRoom("hall");
+        Level.Room room2 = root.getRoom("dungeon");
+        Level.Room room3 = root.getRoom("bathroom");
 
-            System.out.println("What would you like to do? Go, Look, Add, or Quit. Type help for information about the commands");
+        room1.addItem(firstItem);
+        room2.addItem(secondItem);
+        room3.addItem(thirdItem);
+
+        Popstar popstar = new Popstar("Popstar Paul", "Very fast", room2, player);
+        Chicken chicken = new Chicken("Chicken Craig", "Extremely Loud", room1);
+        Wumpus wumpus = new Wumpus("Wumpus Willy", "Very slow", room3, player);
+
+
+        do {
+            System.out.println("You are currently in the " + player.getCurrentRoom().getName());
+
+            System.out.println("What would you like to do? Go, Look, Pick, Check Add, or Quit. Type help for information about the commands");
             response = in.nextLine();
 
 
             if (response.substring(0, 2).equals("go")) {
                 String s = getSpecificString(response);
+                player.setCurrentRoom(root.getRoom(s));
                 currentRoom = root.getRoom(s);
+
             }
             if (response.substring(0,4).equals("look")) {
                 System.out.println("You are currently in the " + currentRoom.getName());
                 System.out.println("You can go to the " + currentRoom.getNeighborNames());
+                System.out.println("The items that you have on you are" + player.getItems());
+                Level.Room room = player.currentRoom;
+                System.out.println("The items in the room are " + room.getItems());
+                System.out.println("The animals in the room are " + root.showCreatures(room));
+
 
             }
             if (response.substring(0,3).equals("add")) {
@@ -47,13 +72,20 @@ public class Main {
                 System.out.print("Please add a description");
                 String information = in.nextLine();
                 root.addRoom(room, information);
-                root.addDirectedEdge(currentRoom.getName(), room);
+                String name = currentRoom.getName();
+                root.addDirectedEdge(name, room);
 
             }
             if (response.substring(0,4).equals("pick")) {
                 String item = getSpecificString(response);
-                Item taken = currentRoom.removeItem(item);
-                player.addItem(taken);
+                Item i = new Item(item, "unknown");
+                Level.Room room = player.getCurrentRoom();
+                room.removeItem(item);
+                player.addItem(i);
+            }
+            if (response.substring(0, 5).equals("Check")){
+                String s = root.showCreaturePositions();
+                System.out.println(s);
             }
             if (response.substring(0,4).equals("drop")) {
                 String item = getSpecificString(response);
@@ -75,15 +107,6 @@ public class Main {
 
     }
 
-    private static int getLast(String ans, int val) {
-        for (int letter = val; letter < ans.length(); letter++) {
-            String partial = ans.substring(letter, letter + 1);
-            if (partial.equals(">")) {
-                return letter;
-            }
-        }
-        return -1;
-    }
 
     private static String getSpecificString(String ans) {
         String output = "";
